@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ShopifyController;
+use App\Http\Controllers\ShopifyProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->middleware(['verify.shopify'])->name('home');
+
+
+Route::get('/import-products', [ShopifyProductController::class, 'importProducts']);
