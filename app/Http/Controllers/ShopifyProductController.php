@@ -23,10 +23,10 @@ class ShopifyProductController extends Controller
         foreach ($preparedData as $productData) {
             $response = $this->shopifyHelper->createProduct($productData);
             if (isset($response['errors'])) {
-                // Handle errors
+
                 echo "Error: " . json_encode($response['errors']);
             } else {
-                // Product created successfully
+                
                 echo "Product created: " . $response['data']['productCreate']['product']['title'] . "\n";
             }
         }

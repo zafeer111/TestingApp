@@ -14,7 +14,6 @@ class ShopifyHelper
 
     public function __construct()
     {
-        // Fetch the first (and only) user record from the database
         $user = User::first();
 
         if (!$user) {
@@ -125,7 +124,6 @@ class ShopifyHelper
         }
         GRAPHQL;
 
-        // Debug the query
         echo "GraphQL Query: " . $query;
 
         $response = $this->client->post("https://{$this->shopifyStoreUrl}/admin/api/2024-04/graphql.json", [
@@ -138,7 +136,6 @@ class ShopifyHelper
 
         $responseBody = $response->getBody()->getContents();
 
-        // Debug the response
         echo "Response: " . $responseBody;
 
         return json_decode($responseBody, true);
