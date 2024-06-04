@@ -65,17 +65,17 @@ class ShopifyHelper
                     ]
                 ],
                 'metafields' => [
-                    ['key' => 'system', 'value' => $product['Sytem'], 'type' => 'single_line_text_field'],
-                    ['key' => 'brand', 'value' => $product['Brand'], 'type' => 'single_line_text_field'],
-                    ['key' => 'capacity', 'value' => $product['Capacity'], 'type' => 'single_line_text_field'],
-                    ['key' => 'memory_type', 'value' => $product['Memory Type'], 'type' => 'single_line_text_field'],
-                    ['key' => 'memory_speed', 'value' => $product['Memory Speed'], 'type' => 'single_line_text_field'],
-                    ['key' => 'error_correction', 'value' => $product['Error Correction'], 'type' => 'single_line_text_field'],
-                    ['key' => 'length', 'value' => $product['Length'], 'type' => 'single_line_text_field'],
-                    ['key' => 'width', 'value' => $product['Width'], 'type' => 'single_line_text_field'],
-                    ['key' => 'height', 'value' => $product['Height'], 'type' => 'single_line_text_field'],
-                    ['key' => 'weight', 'value' => $product['Weight'], 'type' => 'single_line_text_field'],
-                    ['key' => 'pic_name', 'value' => $product['Pic name'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'system', 'value' => $product['Sytem'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'brand', 'value' => $product['Brand'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'capacity', 'value' => $product['Capacity'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'memory_type', 'value' => $product['Memory Type'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'memory_speed', 'value' => $product['Memory Speed'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'error_correction', 'value' => $product['Error Correction'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'length', 'value' => $product['Length'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'width', 'value' => $product['Width'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'height', 'value' => $product['Height'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'weight', 'value' => $product['Weight'], 'type' => 'single_line_text_field'],
+                    ['namespace' => 'custom','key' => 'pic_name', 'value' => $product['Pic name'], 'type' => 'single_line_text_field'],
                 ]
             ];
         }

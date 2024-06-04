@@ -27,6 +27,6 @@ class User extends Authenticatable implements IShopModel
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'remember_token',
     ];
 }
