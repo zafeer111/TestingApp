@@ -11,11 +11,12 @@ class Shopify {
     protected $baseUrl;
     protected $url;
     protected $headers;
+    protected $client;
 
 
     public function __construct($shop) {
         $this->shop = $shop;
-        $this->baseUrl = '/admin/api/2024-01/'; //config('app.shopify_admin_base_url');
+        $this->baseUrl = '/admin/api/2024-04/'; //config('app.shopify_admin_base_url');
         $this->url = "https://{$shop['name']}{$this->baseUrl}";
         $this->headers = [
             'X-Shopify-Access-Token'     => $shop['password'],
