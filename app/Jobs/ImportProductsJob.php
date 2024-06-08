@@ -3,8 +3,6 @@
 namespace App\Jobs;
 
 use App\Helpers\Shopify;
-use App\Helpers\ShopifyHelper;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,18 +14,22 @@ class ImportProductsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $filePath;
+    protected $product;
     protected $shop;
+    protected $type;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param array $product
+     * @param array $shop
+     * @param string $type
      */
-    public function __construct($filePath, $shop)
+    public function __construct($product, $shop, $type)
     {
-        $this->filePath = $filePath;
+        $this->product = $product;
         $this->shop = $shop;
+        $this->type = $type;
     }
 
     /**
@@ -37,48 +39,35 @@ class ImportProductsJob implements ShouldQueue
      */
     public function handle()
     {
-        $shopifyHelper = new ShopifyHelper();
-        $products = $shopifyHelper->readCSVFile($this->filePath);
         $shopify = new Shopify($this->shop);
 
-        foreach ($products as $product) {
-            $productData = $this->prepareProductData($product);
-            $payload = ['input' => $productData];
-
-            $request['query'] = $this->shopifyMutationForProduct();
-            $request['variables'] = $payload ;
-            $shopifyProduct = $shopify->post('graphql.json', $request);
-            Log::info(var_export($shopifyProduct, true));
+        switch ($this->type) {
+            case 'memory':
+                $productData = $shopify->prepareProductDataMemory($this->product);
+                break;
+            case 'internal-drives':
+                $productData = $shopify->prepareProductDataInternalDrives($this->product);
+                break;
+            case 'external-drives':
+                $productData = $shopify->prepareProductDataExternalDrives($this->product);
+                break;
+            case 'cpu':
+                $productData = $shopify->prepareProductDataCPU($this->product);
+                break;
+            case 'video-card':
+                $productData = $shopify->prepareProductDataVideoCard($this->product);
+                break;
+            default:
+                throw new \Exception("Unsupported product type: {$this->type}");
         }
-    }
 
-    private function prepareProductData($product)
-    {
-        return [
-            'title' => $product['Product'],
-            'bodyHtml' => $product['Short Description'],
-            'vendor' => $product['Brand'],
-            'productType' => $product['DIMM Type'],
-            'variants' => [
-                [
-                    'price' => str_replace(['$', ','], '', $product['Price']),
-                    'sku' => $product['SKU']
-                ]
-            ],
-            'metafields' => [
-                ['namespace' => 'custom', 'key' => 'system', 'value' => $product['Sytem'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'brand', 'value' => $product['Brand'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'capacity', 'value' => $product['Capacity'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'memory_type', 'value' => $product['Memory Type'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'memory_speed', 'value' => $product['Memory Speed'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'error_correction', 'value' => $product['Error Correction'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'length', 'value' => $product['Length'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'width', 'value' => $product['Width'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'height', 'value' => $product['Height'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'weight', 'value' => $product['Weight'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'pic_name', 'value' => $product['Pic name'], 'type' => 'single_line_text_field'],
-            ]
-        ];
+
+        $payload = ['input' => $productData];
+
+        $request['query'] = $this->shopifyMutationForProduct();
+        $request['variables'] = $payload;
+        $shopifyProduct = $shopify->post('graphql.json', $request);
+        Log::info(var_export($shopifyProduct, true));
     }
 
     private function shopifyMutationForProduct(): string
@@ -87,21 +76,11 @@ class ImportProductsJob implements ShouldQueue
             productCreate(input: $input) {
                 product {
                     id
-                    title
-                    handle
-                    variants(first: 1) {
-                        edges {
-                            node {
-                                id
-                                title
-                            }
-                        }
-                    }
                 }
-              userErrors {
-                field
-                message
-              }
+                userErrors {
+                    field
+                    message
+                }
             }
         }';
     }
