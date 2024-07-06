@@ -168,35 +168,56 @@ class Shopify
 
     public function prepareProductDataCPU($product)
     {
-        $descriptionLines = explode("\n", $product['Discription']);
+        $descriptionLines = explode("\n", $product['Short Description']);
         $descriptionHtml = '<ul>';
         foreach ($descriptionLines as $line) {
             $descriptionHtml .= '<li>' . htmlspecialchars($line) . '</li>';
         }
         $descriptionHtml .= '</ul>';
 
-        return [
-            'title' => $product['Product'],
+        $input = [
+            'title' => $product['Title'],
             'descriptionHtml' => $descriptionHtml,
             'vendor' => $product['Brand'],
             'productType' => 'CPU',
+            'templateSuffix' => 'template-full-width-2',
+            'published' => true,
+            'status' => 'ACTIVE',
             'variants' => [
                 [
                     'price' => str_replace(['$', ','], '', $product['Price']),
-                    'sku' => $product['SKU']
+                    'sku' => $product['SKU'],
+                    'weight' => (double)$product['Weight'],
+                    'weightUnit' => 'POUNDS',
                 ]
             ],
             'metafields' => [
-                ['namespace' => 'custom', 'key' => 'brand', 'value' => $product['Brand'], 'type' => 'single_line_text_field'],
+                ['namespace' => 'custom', 'key' => 'processor', 'value' => $product['Processor'], 'type' => 'single_line_text_field'],
                 ['namespace' => 'custom', 'key' => 'number_of_cores', 'value' => $product['Number of Core'], 'type' => 'single_line_text_field'],
                 ['namespace' => 'custom', 'key' => 'processor_speed', 'value' => $product['Processor Speed'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'specification', 'value' => $product['Specification'], 'type' => 'multi_line_text_field'],
+                ['namespace' => 'custom', 'key' => 'specification', 'value' => $product['Expended Description'], 'type' => 'multi_line_text_field'],
                 ['namespace' => 'custom', 'key' => 'length', 'value' => $product['Length'], 'type' => 'single_line_text_field'],
                 ['namespace' => 'custom', 'key' => 'width', 'value' => $product['Width'], 'type' => 'single_line_text_field'],
                 ['namespace' => 'custom', 'key' => 'height', 'value' => $product['Height'], 'type' => 'single_line_text_field'],
                 ['namespace' => 'custom', 'key' => 'weight', 'value' => $product['Weight'], 'type' => 'single_line_text_field'],
-                ['namespace' => 'custom', 'key' => 'pic_name', 'value' => $product['Pic name'], 'type' => 'single_line_text_field']
-            ]
+            ],
+            'seo' => [
+                'title' => $product['Title']
+            ],
+        ];
+
+        $media = [];
+        if ($product['Image URL']){
+            $media = [
+                'mediaContentType' => 'IMAGE',
+                'originalSource' => $product['Image URL']
+            ];
+        }
+
+
+        return [
+            'input' => $input,
+            'media' => $media,
         ];
     }
 

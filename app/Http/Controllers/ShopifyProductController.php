@@ -19,7 +19,7 @@ class ShopifyProductController extends Controller
     public function importProducts()
     {
         $shop = User::select('name', 'password')
-            ->where('name', env('SHOP', 'zafeer-development.myshopify.com'))
+            ->where('name', env('SHOP', 'upgradedaddy.myshopify.com'))
             ->first()
             ->toArray();
 

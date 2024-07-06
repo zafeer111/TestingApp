@@ -33,7 +33,7 @@ class ImportShopifyProduct extends Command
         $type = $this->option('type');
 
         $shop = User::select('name', 'password')
-            ->where('name', env('SHOP', 'zafeer-development.myshopify.com'))
+            ->where('name', env('SHOP', 'upgradedaddy.myshopify.com'))
             ->first()
             ->toArray();
 
@@ -66,6 +66,7 @@ class ImportShopifyProduct extends Command
             $products = $shopifyHelper->readCSVFile($filePath);
 
             foreach ($products as $product) {
+
                 ImportProductsJob::dispatch($product, $shop, $type);
             }
         } else {
