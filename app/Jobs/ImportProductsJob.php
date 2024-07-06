@@ -46,23 +46,21 @@ class ImportProductsJob implements ShouldQueue
                 $productData = $shopify->prepareProductDataMemory($this->product);
                 break;
             case 'internal-drives':
-                $productData = $shopify->prepareProductDataInternalDrives($this->product);
+                $payload = $shopify->prepareProductDataInternalDrives($this->product);
                 break;
             case 'external-drives':
-                $productData = $shopify->prepareProductDataExternalDrives($this->product);
+                $payload = $shopify->prepareProductDataExternalDrives($this->product);
                 break;
             case 'cpu':
-                $productData = $shopify->prepareProductDataCPU($this->product);
+                $payload = $shopify->prepareProductDataCPU($this->product);
                 break;
             case 'video-card':
-                $productData = $shopify->prepareProductDataVideoCard($this->product);
+                $payload = $shopify->prepareProductDataVideoCard($this->product);
                 break;
             default:
                 throw new \Exception("Unsupported product type: {$this->type}");
         }
 
-
-        $payload = ['input' => $productData];
 
         $request['query'] = $this->shopifyMutationForProduct();
         $request['variables'] = $payload;
@@ -72,15 +70,17 @@ class ImportProductsJob implements ShouldQueue
 
     private function shopifyMutationForProduct(): string
     {
-        return 'mutation productCreate($input: ProductInput!) {
-            productCreate(input: $input) {
+        return 'mutation productCreate($input: ProductInput!, $media: [CreateMediaInput!]) {
+            productCreate(input: $input, media: $media) {
                 product {
                     id
+                    title
+                    handle
                 }
-                userErrors {
-                    field
-                    message
-                }
+              userErrors {
+                field
+                message
+              }
             }
         }';
     }
